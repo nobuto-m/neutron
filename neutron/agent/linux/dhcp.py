@@ -500,7 +500,7 @@ class Dnsmasq(DhcpLocalProcess):
         buf = six.StringIO()
         filename = self.get_conf_file_name('host')
 
-        LOG.debug('Building host file: %s', filename)
+        LOG.warn('Building host file: %s', filename)
         dhcp_enabled_subnet_ids = [s.id for s in self.network.subnets
                                    if s.enable_dhcp]
         for (port, alloc, hostname, name) in self._iter_hosts():
@@ -515,10 +515,6 @@ class Dnsmasq(DhcpLocalProcess):
             if netaddr.valid_ipv6(ip_address):
                 ip_address = '[%s]' % ip_address
 
-            LOG.debug('Adding %(mac)s : %(name)s : %(ip)s',
-                      {"mac": port.mac_address, "name": name,
-                       "ip": ip_address})
-
             if getattr(port, 'extra_dhcp_opts', False):
                 buf.write('%s,%s,%s,%s%s\n' %
                           (port.mac_address, name, ip_address,
@@ -528,7 +524,7 @@ class Dnsmasq(DhcpLocalProcess):
                           (port.mac_address, name, ip_address))
 
         utils.replace_file(filename, buf.getvalue())
-        LOG.debug('Done building host file %s', filename)
+        LOG.warn('Done building host file %s', filename)
         return filename
 
     def _read_hosts_file_leases(self, filename):
